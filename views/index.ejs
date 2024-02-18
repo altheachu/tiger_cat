@@ -1,0 +1,85 @@
+<%-include("partials/header.ejs")%>
+
+<div class="container text-center">
+  <div class="custom_layout">
+    <div class="bg-info">
+      <div class="btn_add">
+        <button class="btn btn-primary">Add</button>
+      </div>
+      <nav class="list_custom">
+        <ul class="list-unstyled">
+          <%if(locals.articles){%>
+            <%for (let i = 0; i < articles.length; i++){ %>
+              <li><a><%=articles[i].title%></a></li>
+            <%}%>
+          <%}%>
+        </ul>  
+      </nav>
+    </div>
+    <div>
+      <main>
+        <a id="top"></a>
+        <%if(locals.articles){%>
+          <%for (let i = 0; i < articles.length; i++){ %>
+            <div class="article_container">
+              <div class="article_title">
+                <%=articles[i].title%>
+              </div>
+              <div class="article_content" >
+                <div class="article_readonly">
+                  <%=articles[i].content%>
+                </div>
+                <!-- <div class="artitle_amend">
+                  <textarea class="article_textarea">
+                    <%=articles[i].content%>
+                  </textarea>
+                </div> -->
+              </div>
+              <div class="article_amend">
+                <a href="#top">Top</a>
+                <button class="btn btn-primary">Edit</button>
+                <button class="btn btn-success">Save</button>
+                <button class="btn btn-danger">Delete</button>
+              </div>
+            </div>
+          <%}%>
+        <%}%>
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- https://medium.com/@mingjunlu/building-a-simple-navbar-with-html-and-css-using-flexbox-and-inline-block-dfb9b10782d4 -->
+
+<!-- <table>
+  <tbody>
+    <tr>
+      <td>
+        <ul class="list-unstyled fw-normal pb-2 small">
+          <li>
+            <a href="/docs/5.3/getting-started/introduction/" class="btn btn-primary">
+              Introduction
+            </a>
+          </li>
+          <li><a href="#" class="btn btn-primary">Bio</a></li>
+          <li><a href="#" class="btn btn-primary">Habbit</a></li>
+          <li><a href="#" class="btn btn-primary">Favorite</a></li>
+          <li><a href="#" class="btn btn-primary">Significance</a></li>
+        </ul>  
+      </td>
+      <td></td>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>   -->
+
+<%-include("partials/footer.ejs")%>
+
+<script>
+  const titles = document.getElementsByClassName("list-unstyled")[0].children;
+  for (let i = 0; i < titles.length; i++){
+    let tag = document.getElementsByClassName("list-unstyled")[0].children[i].children[0];
+    tag.name = "item";
+    tag.href = "#" + tag.innerHTML.toLowerCase();
+  }
+</script>
