@@ -6,6 +6,7 @@ const app = express();
 const port = 3000;
 
 app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.json());
 app.use('/css', express.static('node_modules/bootstrap/dist/css'));
 app.use(express.static("public"))
 
@@ -40,8 +41,8 @@ app.get("/", (req, res)=>{
           idxs.forEach((idx)=>{
             tmpArticles.forEach((article)=>{
               if(article['idx']==idx){
-                let aArticls = {title: article['title'], content: article['content']}
-                articles.push(aArticls);
+                let aArticles = {title: article['title'], content: article['content'], index: article['idx']}
+                articles.push(aArticles);
               }
             });
           });
@@ -59,4 +60,8 @@ app.get("/", (req, res)=>{
   //   if (err) throw err;
   //   console.log("The file has been saved.");
   // })
+})
+
+app.post("/submit", (req, res)=>{
+  console.log(req.body);
 })

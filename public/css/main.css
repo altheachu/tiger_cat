@@ -49,5 +49,14 @@
 }
 
 .artitle_amend{
-  display: block;
+  /* display: block; */
+  display: none;
+}
+
+.article_title{
+  font-size: 160%;
+}
+
+.article_index{
+  display: none;
 }
