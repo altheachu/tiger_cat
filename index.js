@@ -62,6 +62,10 @@ app.get("/", (req, res)=>{
   // })
 })
 
-app.post("/submit", (req, res)=>{
+app.post("/save", (req, res)=>{
+  console.log(req.body);
+})
+
+app.post("/delete", (req, res)=>{
   console.log(req.body);
 })

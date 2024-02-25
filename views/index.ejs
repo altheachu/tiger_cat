@@ -31,19 +31,19 @@
                 <%=articles[i].title%>
                 </div>
                 <div class="article_content" >
-                <div class="article_readonly">
+                  <div class="article_readonly">
                   <%=articles[i].content%>
-                </div>
-                <div class="artitle_amend">
-                  <textarea class="article_textarea">
-                    <%=articles[i].content%>
-                  </textarea>
-                </div>
+                  </div>
+                  <div class="artitle_edit">
+                    <textarea class="article_textarea">
+                      <%=articles[i].content%>
+                    </textarea>
+                  </div>
                 </div>
                 <div class="article_amend">
                   <a href="#top">Top</a> 
                   <button class="btn btn-primary">Edit</button>
-                  <button class="btn btn-success" type="submit">Save</button>
+                  <button class="btn btn-success">Save</button>
                   <button class="btn btn-danger">Delete</button>
                 </div>
               </form>
@@ -64,29 +64,75 @@
     tag.name = "item";
     tag.href = "#" + tag.innerHTML.toLowerCase();
   }
+
   const artitle_titles = document.getElementsByClassName("article_title");
   for (let i = 0; i < artitle_titles.length; i++){
     let article_title_tag = document.getElementsByClassName("article_title")[i];
     article_title_tag.id = document.getElementsByClassName("article_title")[i].innerText.toLowerCase();
   }
-  document.getElementsByTagName('form')[0].addEventListener('submit', function(event) {
-    alert('submit');
-    event.preventDefault();
-    const test = {
-      data: 'althea'
+  
+  const article_form = document.getElementsByTagName("form");
+  const article_readonly = document.getElementsByClassName("article_readonly");
+  const artitle_edit = document.getElementsByClassName("artitle_edit");
+  let preInnerHTML = '';
+  let nowInnerHTML = '';
+  for (let i = 0; i < article_form.length; i++){
+    document.getElementsByTagName("form")[i].addEventListener("submit", function(evnet){
+      let button_click = evnet.submitter.getAttribute("class");
+      if (button_click.includes("btn-primary")){
+        preInnerHTML = document.getElementsByClassName("artitle_edit")[i].childNodes[1].value;
+        article_readonly[i].style.display = "none";
+        artitle_edit[i].style.display = "block";
+      } else if (button_click.includes("btn-success")){
+        event.preventDefault();
+        let file_no = article_form[i].children[0].innerHTML.trim();
+        nowInnerHTML = document.getElementsByClassName("artitle_edit")[i].childNodes[1].value;
+        if(preInnerHTML===nowInnerHTML){
+          article_readonly[i].removeAttribute("style");
+          artitle_edit[i].removeAttribute("style");
+          return;
+        } else {
+          save(file_no, nowInnerHTML);
+          article_readonly[i].removeAttribute("style");
+          artitle_edit[i].removeAttribute("style");
+        }
+      } else if (button_click.includes("btn-danger")){
+        let file_no = article_form[i].children[0].innerHTML.trim();
+        del(file_no);
+      }
+    });
+  }
+
+  function save(file_no, textareaContent) {
+    const data = {
+        fileNo: file_no, 
+        content: textareaContent
     };
-    let json = JSON.stringify(test);
-    console.log(json)
     let xhr = new XMLHttpRequest();
-    xhr.open('POST', '/submit', true);
+    xhr.open('POST', '/save', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.onreadystatechange = function() {
       if (xhr.readyState === 4 && xhr.status === 200) {
-        console.log('请求成功');
-        // 处理响应
+        console.log('request success');
         console.log(xhr.responseText);
       }
     };
-    xhr.send(JSON.stringify({ data: 'test' }));
-  });
+    xhr.send(JSON.stringify(data));
+  }
+
+  function del(file_no){
+    const data = {
+        fileNo: file_no, 
+    };
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', '/delete', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        console.log('request success');
+        console.log(xhr.responseText);
+      }
+    };
+    xhr.send(JSON.stringify(data));
+  }
 </script>
