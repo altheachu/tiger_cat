@@ -30,7 +30,7 @@
 
 .article_content {
   text-align: left;
-  font-size: 120%;
+  font-size: 130%;
 }
 
 .article_amend{
@@ -46,6 +46,9 @@
 
 .article_readonly{
   display: block;
+  /* word-wrap: break-word; 
+  word-break: normal; */
+  white-space: pre-wrap;
 }
 
 .artitle_edit{
@@ -54,7 +57,8 @@
 }
 
 .article_title{
-  font-size: 160%;
+  margin-top: 20px;
+  font-size: 200%;
 }
 
 .article_index{

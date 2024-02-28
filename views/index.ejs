@@ -28,11 +28,11 @@
                   <%=articles[i].index%>
                 </div>
                 <div class="article_title">
-                <%=articles[i].title%>
+                  <%=articles[i].title%>
                 </div>
                 <div class="article_content" >
                   <div class="article_readonly">
-                  <%=articles[i].content%>
+                    <%=articles[i].content%>
                   </div>
                   <div class="artitle_edit">
                     <textarea class="article_textarea">
@@ -80,6 +80,7 @@
     document.getElementsByTagName("form")[i].addEventListener("submit", function(evnet){
       let button_click = evnet.submitter.getAttribute("class");
       if (button_click.includes("btn-primary")){
+        event.preventDefault();
         preInnerHTML = document.getElementsByClassName("artitle_edit")[i].childNodes[1].value;
         article_readonly[i].style.display = "none";
         artitle_edit[i].style.display = "block";
@@ -104,6 +105,7 @@
   }
 
   function save(file_no, textareaContent) {
+    console.log('textareaContent', textareaContent);
     const data = {
         fileNo: file_no, 
         content: textareaContent
@@ -114,7 +116,9 @@
     xhr.onreadystatechange = function() {
       if (xhr.readyState === 4 && xhr.status === 200) {
         console.log('request success');
-        console.log(xhr.responseText);
+        // console.log(xhr.responseText);
+        location.reload(true); 
+        console.log('save done');
       }
     };
     xhr.send(JSON.stringify(data));
@@ -130,7 +134,9 @@
     xhr.onreadystatechange = function() {
       if (xhr.readyState === 4 && xhr.status === 200) {
         console.log('request success');
-        console.log(xhr.responseText);
+        // console.log(xhr.responseText);
+        // location.reload(true); 
+        // console.log('reload');
       }
     };
     xhr.send(JSON.stringify(data));
