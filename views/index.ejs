@@ -4,7 +4,7 @@
   <div class="custom_layout">
     <div class="bg-info">
       <div class="btn_add">
-        <button class="btn btn-primary">Add</button>
+        <button data-open-modal class="btn btn-primary">Add</button>
       </div>
       <nav class="list_custom">
         <ul class="list-unstyled">
@@ -53,11 +53,28 @@
       </main>
     </div>
   </div>
+  <div class="my-modal-container">
+    <div class="my-modal">
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum voluptatum placeat iure quis non facilis veritatis earum reprehenderit accusamus aperiam.</p>
+        <button data-close-modal class="btn">Confirm</button>
+    </div>
+  </div>
 </div>
+
+
 
 <%-include("partials/footer.ejs")%>
 
 <script>
+  const modal = document.querySelector('.my-modal-container');
+  const openBtn = document.querySelectorAll('*[data-open-modal]');
+  openBtn.forEach(node => {
+    node.addEventListener('click', () => {
+      fadeIn(modal, 'flex');
+      blockScroll();
+    });
+  });
+
   const titles = document.getElementsByClassName("list-unstyled")[0].children;
   for (let i = 0; i < titles.length; i++){
     let tag = document.getElementsByClassName("list-unstyled")[0].children[i].children[0];
@@ -105,7 +122,6 @@
   }
 
   function save(file_no, textareaContent) {
-    console.log('textareaContent', textareaContent);
     const data = {
         fileNo: file_no, 
         content: textareaContent
@@ -125,20 +141,70 @@
   }
 
   function del(file_no){
-    const data = {
+    let yes = confirm('確定刪除嗎？');
+    if (yes) {
+      const data = {
         fileNo: file_no, 
-    };
-    let xhr = new XMLHttpRequest();
-    xhr.open('POST', '/delete', true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        console.log('request success');
-        // console.log(xhr.responseText);
-        // location.reload(true); 
-        // console.log('reload');
-      }
-    };
-    xhr.send(JSON.stringify(data));
+      };
+      let xhr = new XMLHttpRequest();
+      xhr.open('POST', '/delete', true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          console.log('request success');
+          // console.log(xhr.responseText);
+          location.reload(true); 
+        }
+      };
+      xhr.send(JSON.stringify(data));
+    } 
   }
+
+  function fadeIn (el, display="inline-block", duration=400) {
+    el.style.opacity = el.style.opacity || 0;
+    el.style.display = display;
+    el.style.visibility = "visible";
+
+    let opacity = parseFloat(el.style.opacity) || 0;
+    const timer = setInterval( function() {
+      opacity += 20 / duration;
+      if( opacity >= 1 ) {
+        clearInterval(timer);
+        opacity = 1;
+      }
+      el.style.opacity = opacity;
+    }, 20 );
+  }; 
+
+        // const closeBtn = document.querySelectorAll('*[data-close-modal]');
+        // closeBtn.forEach(node => {
+        //     node.addEventListener('click', () => {
+        //         fadeOut(modal);
+        //         unblockScroll();
+        //     });
+        // });
+
+
+
+        // function fadeOut(el, duration=400) {
+        //     let opacity = 1;
+        //     const timer = setInterval( function() {
+        //     opacity -= 20 / duration;
+        //     if(opacity <= 0) {
+        //         clearInterval(timer);
+        //         opacity = 0;
+        //         el.style.display = "none";
+        //         el.style.visibility = "hidden";
+        //     }
+        //     el.style.opacity = opacity;
+        //     }, 20);
+        // };
+
+        // function blockScroll() {
+        //     document.body.style.overflow = 'hidden';
+        // }
+
+        // function unblockScroll() {
+        //     document.body.style.overflow = null;
+        // }
 </script>

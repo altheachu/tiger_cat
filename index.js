@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 const app = express();
 const port = 3000;
 const path = "./files/";
+const fileExtension = ".txt";
 
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json());
@@ -20,7 +21,7 @@ app.get("/", (req, res)=>{
 })
 
 app.post("/save", (req, res)=>{
-  const fileExtension = ".txt";
+
   const fileName = `${req.body.fileNo}${fileExtension}`;
 
   fs.readFile(`${path}${fileName}`, "utf8", function(err,data){
@@ -37,7 +38,12 @@ app.post("/save", (req, res)=>{
 })
 
 app.post("/delete", (req, res)=>{
-  console.log(req.body);
+
+  const fileName = `${req.body.fileNo}${fileExtension}`;
+
+  fs.unlink(`${path}${fileName}`, function(err){
+    console.log("delete error")
+  });
 })
 
 function renderView(res) {

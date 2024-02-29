@@ -1,8 +1,2 @@
-Introduction$                                                                                                              
-Tiger is a cat.
-                    
-                    
-                    
-                    
-                    
-                    
+Introduction$
+Tiger is a cat. 

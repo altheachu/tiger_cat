@@ -64,3 +64,22 @@
 .article_index{
   display: none;
 }
+
+.my-modal-container {
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  align-items: center;
+  justify-content: center;
+}
+.my-modal {
+  background-color: #fff;
+  display: inline-block;
+  border-radius: 10px;
+  padding: 12px;
+  max-width: 360px;
+}
