@@ -42,8 +42,14 @@ app.post("/delete", (req, res)=>{
   const fileName = `${req.body.fileNo}${fileExtension}`;
 
   fs.unlink(`${path}${fileName}`, function(err){
-    console.log("delete error")
+    if (err) {
+      console.error("Delete error:", err);
+      throw err;
+    } else {
+      console.log("File deleted successfully.");
+    }
   });
+  setTimeout(() => {renderView(res);}, 1500);
 })
 
 function renderView(res) {

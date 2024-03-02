@@ -22,7 +22,7 @@
         <%if(locals.articles){%>
           <%for (let i = 0; i < articles.length; i++){ %>
             <div class="article_container">
-              <form>
+              <form class="article_form">
                 <!--index hide display-->
                 <div class="article_index">
                   <%=articles[i].index%>
@@ -53,20 +53,38 @@
       </main>
     </div>
   </div>
-  <div class="my-modal-container">
-    <div class="my-modal">
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum voluptatum placeat iure quis non facilis veritatis earum reprehenderit accusamus aperiam.</p>
-        <button data-close-modal class="btn">Confirm</button>
+  <div class="add-modal-container">
+    <div class="add-modal">
+      <form class="create_article_form">
+        <div class="add-format">
+          <div class ="modal-line">
+            <label>Title</label>
+            <input placeholder="please enter title here">
+          </div>
+          <div class ="modal-line">
+            <label>Content</label>
+            <textarea>Write down your thoughts</textarea>
+          </div>
+          <div class ="modal-button">
+            <button data-close-modal class="btn btn-1">Cancel</button>
+            <button class="btn btn-info btn-2">Confirm</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="loading-modal-container">
+    <div class="loading-modal">
+      <div>Processing...</div>
     </div>
   </div>
 </div>
 
-
-
 <%-include("partials/footer.ejs")%>
 
 <script>
-  const modal = document.querySelector('.my-modal-container');
+
+  const modal = document.querySelector('.add-modal-container');
   const openBtn = document.querySelectorAll('*[data-open-modal]');
   openBtn.forEach(node => {
     node.addEventListener('click', () => {
@@ -75,36 +93,44 @@
     });
   });
 
-  const titles = document.getElementsByClassName("list-unstyled")[0].children;
+  const closeBtn = document.querySelectorAll("*[data-close-modal]");
+  closeBtn.forEach(node => {
+    node.addEventListener("click", () => {
+      fadeOut(modal);
+      unblockScroll();
+    });
+  });
+
+  const titles = document.querySelectorAll(".list-unstyled")[0].children;
   for (let i = 0; i < titles.length; i++){
-    let tag = document.getElementsByClassName("list-unstyled")[0].children[i].children[0];
+    let tag = document.querySelectorAll(".list-unstyled")[0].children[i].children[0];
     tag.name = "item";
     tag.href = "#" + tag.innerHTML.toLowerCase();
   }
 
-  const artitle_titles = document.getElementsByClassName("article_title");
+  const artitle_titles = document.querySelectorAll(".article_title");
   for (let i = 0; i < artitle_titles.length; i++){
-    let article_title_tag = document.getElementsByClassName("article_title")[i];
-    article_title_tag.id = document.getElementsByClassName("article_title")[i].innerText.toLowerCase();
+    let article_title_tag = document.querySelectorAll(".article_title")[i];
+    article_title_tag.id = document.querySelectorAll(".article_title")[i].innerText.toLowerCase();
   }
   
-  const article_form = document.getElementsByTagName("form");
-  const article_readonly = document.getElementsByClassName("article_readonly");
-  const artitle_edit = document.getElementsByClassName("artitle_edit");
-  let preInnerHTML = '';
-  let nowInnerHTML = '';
+  const article_form = document.querySelectorAll(".article_form");
+  const article_readonly = document.querySelectorAll(".article_readonly");
+  const artitle_edit = document.querySelectorAll(".artitle_edit");
+  let preInnerHTML = "";
+  let nowInnerHTML = "";
   for (let i = 0; i < article_form.length; i++){
-    document.getElementsByTagName("form")[i].addEventListener("submit", function(evnet){
-      let button_click = evnet.submitter.getAttribute("class");
+    document.querySelectorAll(".article_form")[i].addEventListener("submit", function(event){
+      let button_click = event.submitter.getAttribute("class");
       if (button_click.includes("btn-primary")){
         event.preventDefault();
-        preInnerHTML = document.getElementsByClassName("artitle_edit")[i].childNodes[1].value;
+        preInnerHTML = document.querySelectorAll(".artitle_edit")[i].childNodes[1].value;
         article_readonly[i].style.display = "none";
         artitle_edit[i].style.display = "block";
       } else if (button_click.includes("btn-success")){
         event.preventDefault();
         let file_no = article_form[i].children[0].innerHTML.trim();
-        nowInnerHTML = document.getElementsByClassName("artitle_edit")[i].childNodes[1].value;
+        nowInnerHTML = document.querySelectorAll(".artitle_edit")[i].childNodes[1].value;
         if(preInnerHTML===nowInnerHTML){
           article_readonly[i].removeAttribute("style");
           artitle_edit[i].removeAttribute("style");
@@ -122,38 +148,43 @@
   }
 
   function save(file_no, textareaContent) {
+    const modal = document.querySelector('.loading-modal-container');
+    fadeIn(modal,'flex');
     const data = {
         fileNo: file_no, 
         content: textareaContent
     };
     let xhr = new XMLHttpRequest();
-    xhr.open('POST', '/save', true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onreadystatechange = function() {
+    xhr.open("POST", "/save", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = async () => {
       if (xhr.readyState === 4 && xhr.status === 200) {
-        console.log('request success');
-        // console.log(xhr.responseText);
-        location.reload(true); 
-        console.log('save done');
+        console.log("request success");
+          // console.log(xhr.responseText);
+        console.log("save done"); 
+        await reloadPage();
+        fadeOut(modal);
       }
     };
     xhr.send(JSON.stringify(data));
   }
 
   function del(file_no){
-    let yes = confirm('確定刪除嗎？');
+    let yes = confirm("確定刪除嗎？");
     if (yes) {
+      const modal = document.querySelector('.loading-modal-container');
+      fadeIn(modal,'flex');
       const data = {
         fileNo: file_no, 
       };
       let xhr = new XMLHttpRequest();
-      xhr.open('POST', '/delete', true);
-      xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.onreadystatechange = function() {
+      xhr.open("POST", "/delete", true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.onreadystatechange = async () => {
         if (xhr.readyState === 4 && xhr.status === 200) {
-          console.log('request success');
-          // console.log(xhr.responseText);
-          location.reload(true); 
+          console.log("request success");
+          await reloadPage();
+          fadeOut(modal);
         }
       };
       xhr.send(JSON.stringify(data));
@@ -167,44 +198,41 @@
 
     let opacity = parseFloat(el.style.opacity) || 0;
     const timer = setInterval( function() {
-      opacity += 20 / duration;
+      opacity += 50 / duration;
       if( opacity >= 1 ) {
         clearInterval(timer);
         opacity = 1;
       }
       el.style.opacity = opacity;
-    }, 20 );
+    }, 40 );
   }; 
 
-        // const closeBtn = document.querySelectorAll('*[data-close-modal]');
-        // closeBtn.forEach(node => {
-        //     node.addEventListener('click', () => {
-        //         fadeOut(modal);
-        //         unblockScroll();
-        //     });
-        // });
+  function blockScroll() {
+    document.body.style.overflow = 'hidden';
+  }
 
+  function fadeOut(el, duration=400) {
+    let opacity = 1;
+    const timer = setInterval( function() {
+      opacity -= 50 / duration;
+      if(opacity <= 0) {
+        clearInterval(timer);
+        opacity = 0;
+        el.style.display = "none";
+        el.style.visibility = "hidden";
+      }
+      el.style.opacity = opacity;
+    }, 40);
+  };
+  
+  function unblockScroll() {
+    document.body.style.overflow = null;
+  }
 
-
-        // function fadeOut(el, duration=400) {
-        //     let opacity = 1;
-        //     const timer = setInterval( function() {
-        //     opacity -= 20 / duration;
-        //     if(opacity <= 0) {
-        //         clearInterval(timer);
-        //         opacity = 0;
-        //         el.style.display = "none";
-        //         el.style.visibility = "hidden";
-        //     }
-        //     el.style.opacity = opacity;
-        //     }, 20);
-        // };
-
-        // function blockScroll() {
-        //     document.body.style.overflow = 'hidden';
-        // }
-
-        // function unblockScroll() {
-        //     document.body.style.overflow = null;
-        // }
+  async function reloadPage() {
+    return new Promise(resolve => {
+        location.reload(true); 
+        window.onload = resolve; 
+    });
+  }
 </script>
