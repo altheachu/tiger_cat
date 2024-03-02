@@ -59,15 +59,15 @@
         <div class="add-format">
           <div class ="modal-line">
             <label>Title</label>
-            <input placeholder="please enter title here">
+            <input id = "create-title" placeholder="please enter title here" value="test"/>
           </div>
           <div class ="modal-line">
             <label>Content</label>
-            <textarea>Write down your thoughts</textarea>
+            <textarea id="create-content">Write down your thoughts</textarea>
           </div>
           <div class ="modal-button">
-            <button data-close-modal class="btn btn-1">Cancel</button>
-            <button class="btn btn-info btn-2">Confirm</button>
+            <button class="btn btn-custom-font btn-cancel">Cancel</button>
+            <button class="btn btn-custom-font btn-info btn-create">Confirm</button>
           </div>
         </div>
       </form>
@@ -93,12 +93,18 @@
     });
   });
 
-  const closeBtn = document.querySelectorAll("*[data-close-modal]");
-  closeBtn.forEach(node => {
-    node.addEventListener("click", () => {
+  const createForm = document.querySelector(".create_article_form");
+  createForm.addEventListener("submit", function(event){
+    event.preventDefault();
+    const btnType = event.submitter.getAttribute("class");
+    if(btnType.includes("btn-cancel")){
       fadeOut(modal);
       unblockScroll();
-    });
+    } else if (btnType.includes("btn-create")){
+      const createTitle = document.querySelector("#create-title").value;
+      const createContent = document.querySelector("#create-content").value;
+      console.log(createTitle, createContent);
+    }
   });
 
   const titles = document.querySelectorAll(".list-unstyled")[0].children;
