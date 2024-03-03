@@ -20,6 +20,32 @@ app.get("/", (req, res)=>{
   renderView(res);
 })
 
+app.post("/add", (req, res)=>{
+
+  const title = req.body.title;
+  const content = req.body.content;
+  let curFilesNo = [];
+  let fileNo = String(0).padStart(3, 0);
+  fs.readdir(path, (err, files) => {
+    files.forEach((fileName)=>{
+      curFilesNo.push(Number(fileName.replace(fileExtension,"")));
+    })
+    curFilesNo = curFilesNo.sort((a , b) => {
+      return b - a;
+    });
+    fileNo = String(++curFilesNo[0]).padStart(3,0);
+    const fileName = `${fileNo}${fileExtension}`;
+    const fileContent = title + "$\r\n" + content;
+    
+    fs.writeFile(`${path}${fileName}`, fileContent, err=>{
+      if (err) throw err;
+      console.log("The file has been created.");
+    });
+    renderView(res);
+  });
+
+})
+
 app.post("/save", (req, res)=>{
 
   const fileName = `${req.body.fileNo}${fileExtension}`;
@@ -32,8 +58,8 @@ app.post("/save", (req, res)=>{
     fs.writeFile(`${path}${fileName}`, fileContent, err=>{
       if (err) throw err;
       console.log("The file has been saved.");
+      renderView(res);
     });
-    renderView(res);
   })
 })
 

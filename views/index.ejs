@@ -59,11 +59,11 @@
         <div class="add-format">
           <div class ="modal-line">
             <label>Title</label>
-            <input id = "create-title" placeholder="please enter title here" value="test"/>
+            <input id = "create-title" placeholder="Enter title here"/>
           </div>
           <div class ="modal-line">
             <label>Content</label>
-            <textarea id="create-content">Write down your thoughts</textarea>
+            <textarea id="create-content" placeholder="Write down your thoughts"></textarea>
           </div>
           <div class ="modal-button">
             <button class="btn btn-custom-font btn-cancel">Cancel</button>
@@ -103,7 +103,27 @@
     } else if (btnType.includes("btn-create")){
       const createTitle = document.querySelector("#create-title").value;
       const createContent = document.querySelector("#create-content").value;
-      console.log(createTitle, createContent);
+      if(createTitle===undefined||createTitle===null||createTitle===''){
+        alert("Title cannot be empty");
+        return;
+      }
+      const data = {
+        title: createTitle,
+        content: createContent,
+      }
+      let xhr = new XMLHttpRequest();
+      xhr.open("POST", "/add", true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.onreadystatechange = async () => {
+        if(xhr.readyState===4 && xhr.status===200){
+          console.log("request success");
+          // console.log(xhr.responseText);
+          console.log("create done"); 
+          await reloadPage();
+          fadeOut(modal);
+        }
+      }
+      xhr.send(JSON.stringify(data));
     }
   });
 
@@ -154,8 +174,8 @@
   }
 
   function save(file_no, textareaContent) {
-    const modal = document.querySelector('.loading-modal-container');
-    fadeIn(modal,'flex');
+    const processModal = document.querySelector('.loading-modal-container');
+    fadeIn(processModal,'flex');
     const data = {
         fileNo: file_no, 
         content: textareaContent
@@ -169,7 +189,7 @@
           // console.log(xhr.responseText);
         console.log("save done"); 
         await reloadPage();
-        fadeOut(modal);
+        fadeOut(processModal);
       }
     };
     xhr.send(JSON.stringify(data));
@@ -238,7 +258,8 @@
   async function reloadPage() {
     return new Promise(resolve => {
         location.reload(true); 
-        window.onload = resolve; 
+        // 頁面完全加載後結束異步
+        window.onload = resolve('success'); 
     });
   }
 </script>
