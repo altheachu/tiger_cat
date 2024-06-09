@@ -1,11 +1,19 @@
 import * as fs from "node:fs";
 import express from "express";
 import bodyParser from 'body-parser';
+import md5 from 'js-md5';
 
 const app = express();
 const port = 3000;
 const path = "./files/";
 const fileExtension = ".txt";
+let loginStatus = false;
+const users = [
+  {
+    account: 'althea',
+    password: 'e10adc3949ba59abbe56e057f20f883e',
+  }
+];
 
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json());
@@ -18,6 +26,31 @@ app.listen(port, ()=>{
 
 app.get("/", (req, res)=>{
   renderView(res);
+})
+
+app.get("/login", (req, res) => {
+  res.render("login.ejs");
+})
+
+app.get("/logout", (req, res) => {
+  loginStatus = false;
+  res.redirect("/");
+})
+
+app.post("/authorization", (req, res) => {
+  const account = req.body.account;
+  const index = users.findIndex((user) => user.account === account);
+  if (index != -1){
+    const user = users[index];
+    if(md5(req.body.password)===user.password){
+      loginStatus = true;
+      res.redirect("/");
+    } else{
+      res.render("login.ejs", {msg: "Wrong password 密碼錯誤"});
+    }
+  } else {
+    res.render("login.ejs", {msg: "Not a valid account 查無此帳號"});
+  }
 })
 
 app.post("/add", (req, res)=>{
@@ -109,7 +142,7 @@ function renderView(res) {
               }
             });
           });
-          res.render("index.ejs", {articles: articles})
+          res.render("index.ejs", {articles: articles, loginStatus: loginStatus})
         }
         setTimeout(()=>{}, 5000);
       });

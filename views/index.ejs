@@ -2,9 +2,14 @@
 
 <div class="container text-center">
   <div class="custom_layout">
-    <div class="bg-info">
-      <div class="btn_add">
-        <button data-open-modal class="btn btn-primary">Add</button>
+    <div class="bg-info">   
+      <div class="btn_common">
+        <%if(!loginStatus){%>
+          <a class="btn btn-info" href="/login">Log in</a>
+        <%} else {%>
+          <a class="btn btn-danger" href="/logout">Log out</a>
+          <button data-open-modal class="btn btn-primary">Add</button>
+        <% } %>
       </div>
       <nav class="list_custom">
         <ul class="list-unstyled">
@@ -41,10 +46,12 @@
                   </div>
                 </div>
                 <div class="article_amend">
-                  <a href="#top">Top</a> 
-                  <button class="btn btn-primary">Edit</button>
-                  <button class="btn btn-success">Save</button>
-                  <button class="btn btn-danger">Delete</button>
+                  <a href="#top">Top</a>
+                  <% if(loginStatus){%> 
+                    <button class="btn btn-primary">Edit</button>
+                    <button class="btn btn-success">Save</button>
+                    <button class="btn btn-danger">Delete</button>
+                  <%}%>  
                 </div>
               </form>
             </div>
